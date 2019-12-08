@@ -1,0 +1,1291 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>KatanaTheory</title>
+    <base href="/">
+
+    <meta charset="utf-8" name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="icon" type="image/x-icon" href="favicon.ico">
+
+
+    <link href="styles.css" rel="stylesheet" />
+
+
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.6.3/css/all.css" integrity="sha384-UHRtZLI+pbxtHCWp1t77Bi1L4ZtiqrqD80Kn4Z8NTSRyMA2Fd33n5dQ8lWUE00s/" crossorigin="anonymous">
+    <link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet" />
+
+    <!-- Latest compiled and minified CSS -->
+    <!--<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css">-->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
+
+    <!-- jQuery library -->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+
+    <!-- Popper JS -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.16.0/umd/popper.min.js"></script>
+
+    <!-- Latest compiled JavaScript -->
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
+
+
+
+
+    <script src="https://threejs.org/build/three.js"></script>
+
+    <script>
+        $(document).ready(function () {
+
+
+            $(window).scroll(function () {
+                $('.top-panel').remove();
+                $('.fadeinleft').each(function (i) {
+
+
+                    //var bottom_of_element = $(this).offset().top + $(this).outerHeight();
+                    //var bottom_of_window = $(window).scrollTop() + $(window).height();
+
+                    var bottom_of_element = $(this).offset().top;
+                    var bottom_of_window = $(window).scrollTop() + $(window).height();
+
+                    if (bottom_of_window > bottom_of_element) {
+                        $(this).animate({ 'opacity': '1', 'margin-left': '0px' }, 1000);
+                    }
+
+                });
+            });
+
+
+
+
+
+            $.fn.countTo = function (options) {
+                options = options || {};
+
+                return $(this).each(function () {
+                    // set options for current element
+                    var settings = $.extend({}, $.fn.countTo.defaults, {
+                        from: $(this).data('from'),
+                        to: $(this).data('to'),
+                        speed: $(this).data('speed'),
+                        refreshInterval: $(this).data('refresh-interval'),
+                        decimals: $(this).data('decimals')
+                    }, options);
+
+                    // how many times to update the value, and how much to increment the value on each update
+                    var loops = Math.ceil(settings.speed / settings.refreshInterval),
+                        increment = (settings.to - settings.from) / loops;
+
+                    // references & variables that will change with each update
+                    var self = this,
+                        $self = $(this),
+                        loopCount = 0,
+                        value = settings.from,
+                        data = $self.data('countTo') || {};
+
+                    $self.data('countTo', data);
+
+                    // if an existing interval can be found, clear it first
+                    if (data.interval) {
+                        clearInterval(data.interval);
+                    }
+                    data.interval = setInterval(updateTimer, settings.refreshInterval);
+
+                    // initialize the element with the starting value
+                    render(value);
+
+                    function updateTimer() {
+                        value += increment;
+                        loopCount++;
+
+                        render(value);
+
+                        if (typeof (settings.onUpdate) == 'function') {
+                            settings.onUpdate.call(self, value);
+                        }
+
+                        if (loopCount >= loops) {
+                            // remove the interval
+                            $self.removeData('countTo');
+                            clearInterval(data.interval);
+                            value = settings.to;
+
+                            if (typeof (settings.onComplete) == 'function') {
+                                settings.onComplete.call(self, value);
+                            }
+                        }
+                    }
+
+                    function render(value) {
+                        var formattedValue = settings.formatter.call(self, value, settings);
+                        $self.html(formattedValue);
+                    }
+                });
+            };
+
+            $.fn.countTo.defaults = {
+                from: 0,               // the number the element should start at
+                to: 0,                 // the number the element should end at
+                speed: 1000,           // how long it should take to count between the target numbers
+                refreshInterval: 100,  // how often the element should be updated
+                decimals: 0,           // the number of decimal places to show
+                formatter: formatter,  // handler for formatting the value before rendering
+                onUpdate: null,        // callback method for every time the element is updated
+                onComplete: null       // callback method for when the element finishes updating
+            };
+
+            function formatter(value, settings) {
+                return value.toFixed(settings.decimals);
+            }
+        }(jQuery));
+
+        jQuery(function ($) {
+            // custom formatting example
+            $('.count-number').data('countToOptions', {
+                formatter: function (value, options) {
+                    return value.toFixed(options.decimals).replace(/\B(?=(?:\d{3})+(?!\d))/g, ',');
+                }
+            });
+
+            // start all the timers
+            $('.timer').each(count);
+
+            function count(options) {
+                var $this = $(this);
+                options = $.extend({}, options || {}, $this.data('countToOptions') || {});
+                $this.countTo(options);
+            }
+
+
+
+
+
+
+        });
+    </script>
+    <script>
+
+
+        var isExpanded = false;
+
+        function collapse() {
+            isExpanded = false;
+        }
+
+        function toggle() {
+            isExpanded = !this.isExpanded;
+        }
+
+
+        function clearFunction() {
+            $('.democlass').remove();
+            $('.clickText').remove();
+            //$(document).ready(function () {
+            //  var c = document.getelementsbyclassname("democlass");
+            //  if (c.length>0) {
+            //    c[0].remove();
+            //  }
+
+            //});
+        }
+
+        function myFunction() {
+            //window.addEventListener('beforeunload', function (event) {
+            //  console.log('I am the 1st one.');
+            //  var c = document.getElementsByClassName("democlass");
+            //  c[0].remove();
+            //});
+
+            //$(window).on("beforeunload", function () {
+            //  var c = document.getelementsbyclassname("democlass");
+            //  c[0].remove();
+            //});
+
+
+            $(document).ready(function () {
+
+
+                var footer = document.getElementsByClassName("foot");
+                var savedFooter = footer[0];
+                footer[0].remove();
+
+                var iframe = document.getElementsByClassName("placeHolder");
+                iframe[0].remove();
+
+
+                var WIDTH = window.innerWidth;
+                var HEIGHT = window.innerHeight;
+
+                var renderer = new THREE.WebGLRenderer({ antialias: true });
+                renderer.setSize(WIDTH, HEIGHT);
+                renderer.setClearColor(0xDDDDDD, 1);
+
+
+                renderer.domElement.setAttribute("class", "democlass");
+                document.body.appendChild(renderer.domElement);
+                document.body.appendChild(savedFooter);
+
+                var text2 = document.createElement('span');
+                text2.style.position = 'absolute';
+                //text2.style.zIndex = 1;    // if you still don't see the label, try uncommenting this
+                text2.style.fontSize = 46 + 'px';
+                text2.style.fontWeight = "bolder";
+                text2.style.color = "blac";
+                text2.innerHTML = "Click on circles!";
+                text2.style.top = 50 + 'px';
+                text2.style.left = 630 + 'px';
+                text2.classList.add("clickText");
+                text2.classList.add("blinking");
+                document.body.appendChild(text2);
+
+
+
+                var scene = new THREE.Scene();
+
+                var camera = new THREE.OrthographicCamera(WIDTH / - 6, WIDTH / 6, HEIGHT / 6, HEIGHT / - 6, 0.1, 100000);
+                //var camera = new THREE.PerspectiveCamera(70, WIDTH / HEIGHT, 0.1, 10000);
+                camera.position.z = 50;
+                scene.add(camera);
+
+                window.addEventListener('resize', () => {
+                    var WIDTH = window.innerWidth;
+                    var HEIGHT = window.innerHeight;
+                    renderer.setSize(WIDTH, HEIGHT);
+                    camera.aspect = WIDTH / HEIGHT;
+                    camera.updateProjectionMatrix();
+                });
+
+
+                //load a picture texture, set wrap mode to repeat
+                var texture = new THREE.TextureLoader().load("assets/hexwords2jpg.jpg");
+                scene.background = texture;
+
+                //var WIDTH = window.innerWidth;
+                //var HEIGHT = window.innerHeight;
+                //texture.repeat.set(meshWidth / textureWidth, meshHeight / textureHeight);
+
+                //draw hexagon
+                //for (var i = 0; i < 10; i++) {
+
+                //  var path = new THREE.Path();
+
+                //  var y = 80 - 10 * i;
+                //  var x = (2 / Math.sqrt(3)) * y;
+                //  path.moveTo(-(x/2), -(y));
+                //  path.moveTo(-(x / 2), -(y));
+                //  path.moveTo(-(x / 2), -(y));
+                //  path.lineTo((x / 2), -(y));
+                //  path.lineTo((x), 0);
+                //  path.lineTo((x / 2), (y));
+                //  path.lineTo(-(x / 2), (y));
+                //  path.lineTo(-(x), 0);
+                //  path.lineTo(-(x / 2), -(y));
+
+                //  var points = path.getPoints();
+
+                //  var geometry = new THREE.BufferGeometry().setFromPoints(points);
+                //  var material = new THREE.LineBasicMaterial({ color: "black", linewidth: 2 });
+
+                //  var line = new THREE.Line(geometry, material);
+                //  scene.add(line);
+                //}
+
+
+
+                //var boxGeometry = new THREE.BoxGeometry(10, 10, 10);
+                //var basicMaterial = new THREE.MeshBasicMaterial({ color: 0x0095DD });
+                //var cube = new THREE.Mesh(boxGeometry, basicMaterial);
+                //cube.position.x = -25;
+                //cube.rotation.set(0.4, 0.2, 0);
+                //scene.add(cube);
+
+                //var torusGeometry = new THREE.TorusGeometry(7, 1, 6, 12);
+                //var phongMaterial = new THREE.MeshPhongMaterial({ color: 0xFF9500 });
+                //var torus = new THREE.Mesh(torusGeometry, phongMaterial);
+                //scene.add(torus);
+
+                //var strangeGeometry = new THREE.DodecahedronGeometry(7);
+                //var lambertMaterial = new THREE.MeshLambertMaterial({ color: 0xEAEFF2 });
+                //var dodecahedron = new THREE.Mesh(strangeGeometry, lambertMaterial);
+                //dodecahedron.position.x = 25;
+                //scene.add(dodecahedron);
+
+
+
+
+                //var path = new THREE.Path();
+
+                //path.moveTo(0, 50);
+                //path.lineTo(-50, 0);
+                //path.lineTo(-50, -50);
+                //path.lineTo(0, -100);
+
+                //path.lineTo(50, -50);
+                //path.lineTo(50, 0);
+                //path.lineTo(0, 50);
+
+                //var points = path.getPoints();
+
+                //var geometry = new THREE.BufferGeometry().setFromPoints(points);
+                //var material = new THREE.LineBasicMaterial({ color: "yellow" });
+
+                //var line = new THREE.Line(geometry, material);
+                //scene.add(line);
+
+
+
+                //var path = new THREE.Path();
+
+                //path.moveTo(0, 45);//-y
+                //path.lineTo(-45, 0);//-x
+                //path.lineTo(-45, -50);//y same, x as above
+                //path.lineTo(0, -95);//-y
+
+                //path.lineTo(45, -50);//y as before,x as above above
+                //path.lineTo(45, 0);//  x as above, y as beore
+                //path.lineTo(0, 45);// moveto co ord
+
+                //var points = path.getPoints();
+
+                //var geometry = new THREE.BufferGeometry().setFromPoints(points);
+                //var material = new THREE.LineBasicMaterial({ color: "yellow" });
+
+                //var line = new THREE.Line(geometry, material);
+                //scene.add(line);
+
+
+                // dots
+                //var geometry = new THREE.SphereGeometry(1, 12, 12);
+                //var material = new THREE.MeshBasicMaterial({ color: "turquoise" });
+                //var dot = new THREE.Mesh(geometry, material);
+                //dot.position.x = -46;
+                //dot.position.y = -73;
+                //scene.add(dot);
+
+                //var geometry = new THREE.SphereGeometry(1, 12, 12);
+                //var material = new THREE.MeshBasicMaterial({ color: "turquoise" });
+                //var dot = new THREE.Mesh(geometry, material);
+                //dot.position.x = 31;
+                //dot.position.y = -49;
+                //scene.add(dot);
+
+                //var geometry = new THREE.SphereGeometry(1, 12, 12);
+                //var material = new THREE.MeshBasicMaterial({ color: "turquoise" });
+                //var dot = new THREE.Mesh(geometry, material);
+                //dot.position.x = 60;
+                //dot.position.y = 0;
+                //scene.add(dot);
+
+                //var geometry = new THREE.SphereGeometry(1, 12, 12);
+                //var material = new THREE.MeshBasicMaterial({ color: "turquoise" });
+                //var dot = new THREE.Mesh(geometry, material);
+                //dot.position.x = 46;
+                //dot.position.y = 73;
+                //scene.add(dot);
+
+                //var geometry = new THREE.SphereGeometry(1, 12, 12);
+                //var material = new THREE.MeshBasicMaterial({ color: "turquoise" });
+                //var dot = new THREE.Mesh(geometry, material);
+                //dot.position.x = -47;
+                //dot.position.y = 73;
+                //scene.add(dot);
+
+                //var geometry = new THREE.SphereGeometry(1, 12, 12);
+                //var material = new THREE.MeshBasicMaterial({ color: "turquoise" });
+                //var dot = new THREE.Mesh(geometry, material);
+                //dot.position.x = -74;
+                //dot.position.y = 0;
+                //scene.add(dot);
+
+                //gauge
+                var shape = new THREE.Shape();
+                shape.moveTo(-46, -73);
+                shape.lineTo(31, -49);
+                shape.lineTo(60, 0);
+                shape.lineTo(46, 73);
+                shape.lineTo(-47, 73);
+                shape.lineTo(-74, 0);
+                shape.lineTo(-46, -73);
+
+                var geometry = new THREE.ShapeGeometry(shape);
+                var fillMaterial = new THREE.MeshBasicMaterial({ color: "mediumpurple", transparent: true, opacity: 0.8 });
+                var fill = new THREE.Mesh(geometry, fillMaterial);
+                scene.add(fill);
+
+
+
+                var path = new THREE.Path();
+
+                path.moveTo(-46, -73);
+                path.lineTo(31, -49);
+                path.lineTo(60, 0);
+                path.lineTo(46, 73);
+                path.lineTo(-47, 73);
+                path.lineTo(-74, 0);
+                path.lineTo(-46, -73);
+
+                var points = path.getPoints();
+
+                var geometry = new THREE.BufferGeometry().setFromPoints(points);
+                var material = new THREE.LineBasicMaterial({ color: "white", linewidth: 2 });
+
+                var line = new THREE.Line(geometry, material);
+                scene.add(line);
+
+                //var geometry = new THREE.SphereGeometry(9, 12, 12);
+                //var material = new THREE.MeshBasicMaterial({ color: "mediumpurple" });
+                //var sphere = new THREE.Mesh(geometry, material);
+                //scene.add(sphere);
+
+
+
+
+                var geometry = new THREE.SphereGeometry(8, 12, 12);
+                var material = new THREE.MeshBasicMaterial({ color: "mediumpurple" });
+                var sphere2 = new THREE.Mesh(geometry, material);
+                var ballid1 = sphere2.id;
+                sphere2.position.x = -52;
+                sphere2.position.y = -81;
+                sphere2.name = "juj";
+                scene.add(sphere2);
+
+                var geometry = new THREE.SphereGeometry(8, 12, 12);
+                var material = new THREE.MeshBasicMaterial({ color: "mediumpurple" });
+                var sphere5 = new THREE.Mesh(geometry, material);
+                var ballid2 = sphere5.id;
+                sphere5.position.x = 52;
+                sphere5.position.y = -81;
+                scene.add(sphere5);
+
+                var geometry = new THREE.SphereGeometry(8, 12, 12);
+                var material = new THREE.MeshBasicMaterial({ color: "mediumpurple" });
+                var sphere6 = new THREE.Mesh(geometry, material);
+                var ballid3 = sphere6.id;
+                sphere6.position.x = 104;
+                sphere6.position.y = 0;
+                scene.add(sphere6);
+
+                var geometry = new THREE.SphereGeometry(8, 12, 12);
+                var material = new THREE.MeshBasicMaterial({ color: "mediumpurple" });
+                var sphere7 = new THREE.Mesh(geometry, material);
+                var ballid4 = sphere7.id;
+                sphere7.position.x = 52;
+                sphere7.position.y = 81;
+                scene.add(sphere7);
+
+                var geometry = new THREE.SphereGeometry(8, 12, 12);
+                var material = new THREE.MeshBasicMaterial({ color: "mediumpurple" });
+                var sphere3 = new THREE.Mesh(geometry, material);
+                var ballid5 = sphere3.id;
+                sphere3.position.x = -52;
+                sphere3.position.y = 81;
+                scene.add(sphere3);
+
+                var geometry = new THREE.SphereGeometry(8, 12, 12);
+                var material = new THREE.MeshBasicMaterial({ color: "mediumpurple" });
+                var sphere4 = new THREE.Mesh(geometry, material);
+                var ballid6 = sphere4.id;
+                sphere4.position.x = -104;
+                sphere4.position.y = 0;
+                scene.add(sphere4);
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+                var light = new THREE.PointLight(0xFFFFFF);
+                light.position.set(-10, 15, 50);
+                scene.add(light);
+
+                var t = 0;
+                function render() {
+                    t += 0.01;
+                    requestAnimationFrame(render);
+                    //cube.rotation.y += 0.01;
+                    //torus.scale.y = Math.abs(Math.sin(t));
+                    //dodecahedron.position.y = -7 * Math.sin(t * 2);
+                    renderer.render(scene, camera);
+                }
+                render();
+
+                //
+                var raycaster, mouse = { x: 0, y: 0 };
+
+
+                renderer.domElement.addEventListener('click', onDocumentMouseClick, false);
+                renderer.domElement.addEventListener('mousemove', onDocumentMouseMove, false);
+
+                function onDocumentMouseMove(event) {
+
+                    mouse.x = (event.clientX / window.innerWidth) * 2 - 1;
+                    mouse.y = - (event.clientY / window.innerHeight) * 2 + 1;
+
+                    raycaster = new THREE.Raycaster();
+                    raycaster.setFromCamera(mouse, camera);
+                    var intersects = raycaster.intersectObjects(scene.children);
+
+                    if (intersects.length > 0) {
+                        $('html,body').css('cursor', 'pointer');
+                    } else {
+                        $('html,body').css('cursor', 'default');
+                    }
+
+                }
+
+                function onDocumentMouseClick(e) {
+                    // Step 1: Detect light helper
+                    //1. sets the mouse position with a coordinate system where the center
+                    //   of the screen is the origin
+                    mouse.x = (e.clientX / window.innerWidth) * 2 - 1;
+                    mouse.y = - (e.clientY / window.innerHeight) * 2 + 1;
+
+                    raycaster = new THREE.Raycaster();
+                    //2. set the picking ray from the camera position and mouse coordinates
+                    raycaster.setFromCamera(mouse, camera);
+
+                    //3. compute intersections (note the 2nd parameter)
+                    var intersects = raycaster.intersectObjects(scene.children, true);
+
+                    for (var i = 0; i < intersects.length; i++) {
+                        if (intersects[0].object.id == ballid1) {
+                            var modal = document.getElementById("myModal1");
+
+                            modal.style.display = "block";
+
+                            var span = document.getElementsByClassName("close")[0];
+
+                            var button = document.getElementsByClassName("btn1")[0];
+
+                            // When the user clicks on <span> (x), close the modal
+                            span.onclick = function () {
+                                modal.style.display = "none";
+                            }
+
+                            button.onclick = function () {
+                                modal.style.display = "none";
+                            }
+
+                            // When the user clicks anywhere outside of the modal, close it
+                            window.onclick = function (event) {
+                                if (event.target == modal) {
+                                    modal.style.display = "none";
+                                }
+                            }
+                            /*
+                                An intersection has the following properties :
+                                    - object : intersected object (THREE.Mesh)
+                                    - distance : distance from camera to intersection (number)
+                                    - face : intersected face (THREE.Face3)
+                                    - faceIndex : intersected face index (number)
+                                    - point : intersection point (THREE.Vector3)
+                                    - uv : intersection point in the object's UV coordinates (THREE.Vector2)
+                            */
+                        }
+
+
+                        else if (intersects[0].object.id == ballid2) {
+                            var modal = document.getElementById("myModal2");
+
+                            modal.style.display = "block";
+
+                            var span = document.getElementsByClassName("close")[1];
+
+                            var button = document.getElementsByClassName("btn2")[0];
+
+                            // When the user clicks on <span> (x), close the modal
+                            span.onclick = function () {
+                                modal.style.display = "none";
+                            }
+
+                            button.onclick = function () {
+                                modal.style.display = "none";
+                            }
+
+                            // When the user clicks anywhere outside of the modal, close it
+                            window.onclick = function (event) {
+                                if (event.target == modal) {
+                                    modal.style.display = "none";
+                                }
+                            }
+                            /*
+                                An intersection has the following properties :
+                                    - object : intersected object (THREE.Mesh)
+                                    - distance : distance from camera to intersection (number)
+                                    - face : intersected face (THREE.Face3)
+                                    - faceIndex : intersected face index (number)
+                                    - point : intersection point (THREE.Vector3)
+                                    - uv : intersection point in the object's UV coordinates (THREE.Vector2)
+                            */
+                        }
+
+
+                        else if (intersects[0].object.id == ballid3) {
+                            var modal = document.getElementById("myModal3");
+
+                            modal.style.display = "block";
+
+                            var span = document.getElementsByClassName("close")[2];
+
+                            var button = document.getElementsByClassName("btn3")[0];
+
+                            // When the user clicks on <span> (x), close the modal
+                            span.onclick = function () {
+                                modal.style.display = "none";
+                            }
+
+                            button.onclick = function () {
+                                modal.style.display = "none";
+                            }
+
+                            // When the user clicks anywhere outside of the modal, close it
+                            window.onclick = function (event) {
+                                if (event.target == modal) {
+                                    modal.style.display = "none";
+                                }
+                            }
+                            /*
+                                An intersection has the following properties :
+                                    - object : intersected object (THREE.Mesh)
+                                    - distance : distance from camera to intersection (number)
+                                    - face : intersected face (THREE.Face3)
+                                    - faceIndex : intersected face index (number)
+                                    - point : intersection point (THREE.Vector3)
+                                    - uv : intersection point in the object's UV coordinates (THREE.Vector2)
+                            */
+                        }
+
+
+
+                        else if (intersects[0].object.id == ballid4) {
+                            var modal = document.getElementById("myModal4");
+
+                            modal.style.display = "block";
+
+                            var span = document.getElementsByClassName("close")[3];
+
+                            var button = document.getElementsByClassName("btn4")[0];
+
+                            // When the user clicks on <span> (x), close the modal
+                            span.onclick = function () {
+                                modal.style.display = "none";
+                            }
+
+                            button.onclick = function () {
+                                modal.style.display = "none";
+                            }
+
+                            // When the user clicks anywhere outside of the modal, close it
+                            window.onclick = function (event) {
+                                if (event.target == modal) {
+                                    modal.style.display = "none";
+                                }
+                            }
+                            /*
+                                An intersection has the following properties :
+                                    - object : intersected object (THREE.Mesh)
+                                    - distance : distance from camera to intersection (number)
+                                    - face : intersected face (THREE.Face3)
+                                    - faceIndex : intersected face index (number)
+                                    - point : intersection point (THREE.Vector3)
+                                    - uv : intersection point in the object's UV coordinates (THREE.Vector2)
+                            */
+                        }
+
+
+
+                        else if (intersects[0].object.id == ballid5) {
+                            var modal = document.getElementById("myModal5");
+
+                            modal.style.display = "block";
+
+                            var span = document.getElementsByClassName("close")[4];
+
+                            var button = document.getElementsByClassName("btn5")[0];
+
+                            // When the user clicks on <span> (x), close the modal
+                            span.onclick = function () {
+                                modal.style.display = "none";
+                            }
+
+                            button.onclick = function () {
+                                modal.style.display = "none";
+                            }
+
+                            // When the user clicks anywhere outside of the modal, close it
+                            window.onclick = function (event) {
+                                if (event.target == modal) {
+                                    modal.style.display = "none";
+                                }
+                            }
+                            /*
+                                An intersection has the following properties :
+                                    - object : intersected object (THREE.Mesh)
+                                    - distance : distance from camera to intersection (number)
+                                    - face : intersected face (THREE.Face3)
+                                    - faceIndex : intersected face index (number)
+                                    - point : intersection point (THREE.Vector3)
+                                    - uv : intersection point in the object's UV coordinates (THREE.Vector2)
+                            */
+                        }
+
+
+
+                        else if (intersects[0].object.id == ballid6) {
+                            var modal = document.getElementById("myModal6");
+
+                            modal.style.display = "block";
+
+                            var span = document.getElementsByClassName("close")[5];
+
+                            var button = document.getElementsByClassName("btn6")[0];
+
+                            // When the user clicks on <span> (x), close the modal
+                            span.onclick = function () {
+                                modal.style.display = "none";
+                            }
+
+                            button.onclick = function () {
+                                modal.style.display = "none";
+                            }
+
+                            // When the user clicks anywhere outside of the modal, close it
+                            window.onclick = function (event) {
+                                if (event.target == modal) {
+                                    modal.style.display = "none";
+                                }
+                            }
+                            /*
+                                An intersection has the following properties :
+                                    - object : intersected object (THREE.Mesh)
+                                    - distance : distance from camera to intersection (number)
+                                    - face : intersected face (THREE.Face3)
+                                    - faceIndex : intersected face index (number)
+                                    - point : intersection point (THREE.Vector3)
+                                    - uv : intersection point in the object's UV coordinates (THREE.Vector2)
+                            */
+                        }
+                    }
+
+
+                }
+                //
+
+
+
+            });
+
+
+        }
+
+    </script>
+
+
+</head>
+<body>
+    <div class='main-nav'>
+        <div class='navbar navbar-inverse navbar-fixed-top navbar-expand-md ' style="margin:0px;padding:0px">
+            <div class='navbar-header'>
+                <button type='button' class='navbar-toggle' data-toggle='collapse' data-target='.navbar-collapse' [attr.aria-expanded]='isExpanded' onclick='toggle()'>
+                    <span class='sr-only'>Toggle navigation</span>
+                    <span class='icon-bar'></span>
+                    <span class='icon-bar'></span>
+                    <span class='icon-bar'></span>
+                    <span class='icon-bar'></span>
+                </button>
+                <!--<a class='navbar-brand' [routerLink]='["/"]'>KatanaTheory</a>-->
+            </div>
+
+            <!--<div class='clearfix'></div>-->
+            <div class='navbar-collapse collapse' [ngClass]='{ "in": isExpanded }'>
+
+                <!--<ul class='nav navbar-nav ' style="padding-right:10px">
+                  <li [routerLinkActive]='["link-active"]' [routerLinkActiveOptions]='{ exact: true }'>
+                    <a class='navbar-brand' [routerLink]='["/"]'><span style="color:black;font-size:xx-large">Katana Theory</span></a>
+                  </li>
+
+                </ul>-->
+
+                <ul class='nav navbar-nav navbar-right'>
+                    <li class="nav-item">
+                        <a class="nav-links" href="index.html" onclick="clearFunction(),collapse()">
+                            <span class="nav-links-text">Home</span>
+                        </a>
+                    </li>
+                    <li class="nav-item tab-sel">
+                        <a class="nav-links" href="skills.html" onclick="clearFunction(),collapse()">
+                            <span class="nav-links-text">Skills</span>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-links" href="portfolio.html" onclick="clearFunction(),collapse()">
+                            <span class="nav-links-text">Projects</span>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-links" href="contactus.html" onclick="clearFunction(),collapse()">
+                            <span class="nav-links-text">Contact</span>
+                        </a>
+                    </li>
+
+
+                </ul>
+            </div>
+        </div>
+    </div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    <!-- skills -->
+
+
+    <iframe class="placeHolder" onload="myFunction()" style="display: none;"></iframe>
+
+    <!-- The Modal -->
+    <div id="myModal1" class="modal">
+
+        <!-- Modal content -->
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>Back-end</h2>
+                <span class="close">&times;</span>
+
+            </div>
+            <div class="modal-body">
+
+                <!--<span style="padding:2px;font-size: large">Some text in the Modal Body</span>-->
+                <div style="padding:5px">
+                    <img src="assets/net.png" alt="Avatar" style="width:250px;height: 60px;padding-right:5px" />
+
+                    <i class="fas fa-star fa-sm" style="color:gold;font-size:24px"></i><span style="padding:5px;"></span>
+                    <i class="fas fa-star fa-sm" style="color:gold;font-size:24px"></i><span style="padding:5px;"></span>
+                    <i class="fas fa-star fa-sm" style="color:gold;font-size:24px"></i><span style="padding:5px;"></span>
+                    <i class="fas fa-star fa-sm" style="color:gold;font-size:24px"></i><span style="padding:5px;"></span>
+                    <i class="fas fa-star fa-sm" style="color:gold;font-size:24px"></i><span style="padding:5px;"></span>
+                </div>
+                <br>
+                <div style="padding:5px">
+                    <img src="assets/csharp.png" alt="Avatar" style="width:250px;height: 60px;padding-right:5px" />
+
+                    <i class="fas fa-star fa-sm" style="color:gold;font-size:24px"></i><span style="padding:5px;"></span>
+                    <i class="fas fa-star fa-sm" style="color:gold;font-size:24px"></i><span style="padding:5px;"></span>
+                    <i class="fas fa-star fa-sm" style="color:gold;font-size:24px"></i><span style="padding:5px;"></span>
+                    <i class="fas fa-star fa-sm" style="color:gold;font-size:24px"></i><span style="padding:5px;"></span>
+                    <i class="fas fa-star fa-sm" style="color:gold;font-size:24px"></i><span style="padding:5px;"></span>
+                </div>
+                <br>
+                <div style="padding:5px">
+                    <img src="assets/java.png" alt="Avatar" style="width:250px;height: 60px;padding-right:5px" />
+
+                    <i class="fas fa-star fa-sm" style="color:gold;font-size:24px"></i><span style="padding:5px;"></span>
+                    <i class="fas fa-star fa-sm" style="color:gold;font-size:24px"></i><span style="padding:5px;"></span>
+                    <i class="fas fa-star fa-sm" style="color:gold;font-size:24px"></i><span style="padding:5px;"></span>
+                </div>
+                <br>
+                <div style="padding:5px">
+                    <img src="assets/cplus.png" alt="Avatar" style="width:250px;height: 60px;padding-right:5px" />
+
+                    <i class="fas fa-star fa-sm" style="color:gold;font-size:24px"></i><span style="padding:5px;"></span>
+                    <i class="fas fa-star fa-sm" style="color:gold;font-size:24px"></i><span style="padding:5px;"></span>
+                </div>
+                <br>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-danger btn1" style="padding:5px">Cancel</button>
+            </div>
+        </div>
+
+    </div>
+
+
+    <!-- The Modal -->
+    <div id="myModal2" class="modal">
+
+        <!-- Modal content -->
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>Design</h2>
+                <span class="close">&times;</span>
+
+            </div>
+            <div class="modal-body">
+
+                <!--<span style="padding:2px;font-size: large">Some text in the Modal Body</span>-->
+                <div style="padding:5px">
+                    <img src="assets/photoshop.png" alt="Avatar" style="width:250px;height: 60px;padding-right:5px" />
+
+                    <i class="fas fa-star fa-sm" style="color:gold;font-size:24px"></i><span style="padding:5px;"></span>
+                    <i class="fas fa-star fa-sm" style="color:gold;font-size:24px"></i><span style="padding:5px;"></span>
+                    <i class="fas fa-star fa-sm" style="color:gold;font-size:24px"></i><span style="padding:5px;"></span>
+                </div>
+                <br>
+                <div style="padding:5px">
+                    <img src="assets/illustrator.png" alt="Avatar" style="width:250px;height: 60px;padding-right:5px" />
+
+                    <i class="fas fa-star fa-sm" style="color:gold;font-size:24px"></i><span style="padding:5px;"></span>
+                    <i class="fas fa-star fa-sm" style="color:gold;font-size:24px"></i><span style="padding:5px;"></span>
+                    <i class="fas fa-star fa-sm" style="color:gold;font-size:24px"></i><span style="padding:5px;"></span>
+                </div>
+                <br>
+                <div style="padding:5px">
+                    <img src="assets/blender.png" alt="Avatar" style="width:250px;height: 60px;padding-right:5px" />
+
+                    <i class="fas fa-star fa-sm" style="color:gold;font-size:24px"></i><span style="padding:5px;"></span>
+                    <i class="fas fa-star fa-sm" style="color:gold;font-size:24px"></i><span style="padding:5px;"></span>
+                    <i class="fas fa-star fa-sm" style="color:gold;font-size:24px"></i><span style="padding:5px;"></span>
+                </div>
+                <br>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-danger btn2" style="padding:5px">Cancel</button>
+            </div>
+        </div>
+
+    </div>
+
+
+    <!-- The Modal -->
+    <div id="myModal3" class="modal">
+
+        <!-- Modal content -->
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>Animation</h2>
+                <span class="close">&times;</span>
+
+            </div>
+            <div class="modal-body">
+
+                <!--<span style="padding:2px;font-size: large">Some text in the Modal Body</span>-->
+                <div style="padding:5px">
+                    <img src="assets/webgl.png" alt="Avatar" style="width:250px;height: 60px;padding-right:5px" />
+
+                    <i class="fas fa-star fa-sm" style="color:gold;font-size:24px"></i><span style="padding:5px;"></span>
+                    <i class="fas fa-star fa-sm" style="color:gold;font-size:24px"></i><span style="padding:5px;"></span>
+                    <i class="fas fa-star fa-sm" style="color:gold;font-size:24px"></i><span style="padding:5px;"></span>
+                </div>
+                <br>
+                <div style="padding:5px">
+                    <img src="assets/threejs.png" alt="Avatar" style="width:250px;height: 60px;padding-right:5px" />
+
+                    <i class="fas fa-star fa-sm" style="color:gold;font-size:24px"></i><span style="padding:5px;"></span>
+                    <i class="fas fa-star fa-sm" style="color:gold;font-size:24px"></i><span style="padding:5px;"></span>
+                    <i class="fas fa-star fa-sm" style="color:gold;font-size:24px"></i><span style="padding:5px;"></span>
+                </div>
+                <br>
+                <div style="padding:5px">
+                    <img src="assets/blender.png" alt="Avatar" style="width:250px;height: 60px;padding-right:5px" />
+
+                    <i class="fas fa-star fa-sm" style="color:gold;font-size:24px"></i><span style="padding:5px;"></span>
+                    <i class="fas fa-star fa-sm" style="color:gold;font-size:24px"></i><span style="padding:5px;"></span>
+                    <i class="fas fa-star fa-sm" style="color:gold;font-size:24px"></i><span style="padding:5px;"></span>
+                </div>
+                <br>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-danger btn3" style="padding:5px">Cancel</button>
+            </div>
+        </div>
+
+    </div>
+
+
+    <!-- The Modal -->
+    <div id="myModal4" class="modal">
+
+        <!-- Modal content -->
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>Front-end</h2>
+                <span class="close">&times;</span>
+
+            </div>
+            <div class="modal-body">
+
+                <!--<span style="padding:2px;font-size: large">Some text in the Modal Body</span>-->
+                <div style="padding:5px">
+                    <img src="assets/html.png" alt="Avatar" style="width:250px;height: 60px;padding-right:5px" />
+
+                    <i class="fas fa-star fa-sm" style="color:gold;font-size:24px"></i><span style="padding:5px;"></span>
+                    <i class="fas fa-star fa-sm" style="color:gold;font-size:24px"></i><span style="padding:5px;"></span>
+                    <i class="fas fa-star fa-sm" style="color:gold;font-size:24px"></i><span style="padding:5px;"></span>
+                    <i class="fas fa-star fa-sm" style="color:gold;font-size:24px"></i><span style="padding:5px;"></span>
+                    <i class="fas fa-star fa-sm" style="color:gold;font-size:24px"></i><span style="padding:5px;"></span>
+                </div>
+                <br>
+                <div style="padding:5px">
+                    <img src="assets/javascript.png" alt="Avatar" style="width:250px;height: 60px;padding-right:5px" />
+
+                    <i class="fas fa-star fa-sm" style="color:gold;font-size:24px"></i><span style="padding:5px;"></span>
+                    <i class="fas fa-star fa-sm" style="color:gold;font-size:24px"></i><span style="padding:5px;"></span>
+                    <i class="fas fa-star fa-sm" style="color:gold;font-size:24px"></i><span style="padding:5px;"></span>
+                    <i class="fas fa-star fa-sm" style="color:gold;font-size:24px"></i><span style="padding:5px;"></span>
+                    <i class="fas fa-star fa-sm" style="color:gold;font-size:24px"></i><span style="padding:5px;"></span>
+                </div>
+                <br>
+                <div style="padding:5px">
+                    <img src="assets/css.png" alt="Avatar" style="width:250px;height: 60px;padding-right:5px" />
+
+                    <i class="fas fa-star fa-sm" style="color:gold;font-size:24px"></i><span style="padding:5px;"></span>
+                    <i class="fas fa-star fa-sm" style="color:gold;font-size:24px"></i><span style="padding:5px;"></span>
+                    <i class="fas fa-star fa-sm" style="color:gold;font-size:24px"></i><span style="padding:5px;"></span>
+                    <i class="fas fa-star fa-sm" style="color:gold;font-size:24px"></i><span style="padding:5px;"></span>
+                    <i class="fas fa-star fa-sm" style="color:gold;font-size:24px"></i><span style="padding:5px;"></span>
+                </div>
+                <br>
+                <div style="padding:5px">
+                    <img src="assets/angular.png" alt="Avatar" style="width:250px;height: 60px;padding-right:5px" />
+
+                    <i class="fas fa-star fa-sm" style="color:gold;font-size:24px"></i><span style="padding:5px;"></span>
+                    <i class="fas fa-star fa-sm" style="color:gold;font-size:24px"></i><span style="padding:5px;"></span>
+                    <i class="fas fa-star fa-sm" style="color:gold;font-size:24px"></i><span style="padding:5px;"></span>
+                    <i class="fas fa-star fa-sm" style="color:gold;font-size:24px"></i><span style="padding:5px;"></span>
+                </div>
+                <br>
+                <div style="padding:5px">
+                    <img src="assets/jquery.png" alt="Avatar" style="width:250px;height: 60px;padding-right:5px" />
+
+                    <i class="fas fa-star fa-sm" style="color:gold;font-size:24px"></i><span style="padding:5px;"></span>
+                    <i class="fas fa-star fa-sm" style="color:gold;font-size:24px"></i><span style="padding:5px;"></span>
+                    <i class="fas fa-star fa-sm" style="color:gold;font-size:24px"></i><span style="padding:5px;"></span>
+                    <i class="fas fa-star fa-sm" style="color:gold;font-size:24px"></i><span style="padding:5px;"></span>
+                </div>
+                <br>
+                <div style="padding:5px">
+                    <img src="assets/webgl.png" alt="Avatar" style="width:250px;height: 60px;padding-right:5px" />
+
+                    <i class="fas fa-star fa-sm" style="color:gold;font-size:24px"></i><span style="padding:5px;"></span>
+                    <i class="fas fa-star fa-sm" style="color:gold;font-size:24px"></i><span style="padding:5px;"></span>
+                    <i class="fas fa-star fa-sm" style="color:gold;font-size:24px"></i><span style="padding:5px;"></span>
+                </div>
+               
+
+
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-danger btn4" style="padding:5px">Cancel</button>
+            </div>
+        </div>
+
+    </div>
+
+
+
+    <!-- The Modal -->
+    <div id="myModal5" class="modal">
+
+        <!-- Modal content -->
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>Database</h2>
+                <span class="close">&times;</span>
+
+            </div>
+            <div class="modal-body">
+
+                <!--<span style="padding:2px;font-size: large">Some text in the Modal Body</span>-->
+                <div style="padding:5px">
+                    <img src="assets/sql.png" alt="Avatar" style="width:250px;height: 60px;padding-right:5px" />
+
+                    <i class="fas fa-star fa-sm" style="color:gold;font-size:24px"></i><span style="padding:5px;"></span>
+                    <i class="fas fa-star fa-sm" style="color:gold;font-size:24px"></i><span style="padding:5px;"></span>
+                    <i class="fas fa-star fa-sm" style="color:gold;font-size:24px"></i><span style="padding:5px;"></span>
+                    <i class="fas fa-star fa-sm" style="color:gold;font-size:24px"></i><span style="padding:5px;"></span>
+                    <i class="fas fa-star fa-sm" style="color:gold;font-size:24px"></i><span style="padding:5px;"></span>
+                </div>
+                <br>
+                <div style="padding:5px">
+                    <img src="assets/oracle.png" alt="Avatar" style="width:250px;height: 60px;padding-right:5px" />
+
+                    <i class="fas fa-star fa-sm" style="color:gold;font-size:24px"></i><span style="padding:5px;"></span>
+                    <i class="fas fa-star fa-sm" style="color:gold;font-size:24px"></i><span style="padding:5px;"></span>
+                </div>
+                <br>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-danger btn5" style="padding:5px">Cancel</button>
+            </div>
+        </div>
+
+    </div>
+
+
+
+    <!-- The Modal -->
+    <div id="myModal6" class="modal">
+
+        <!-- Modal content -->
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>Mobile</h2>
+                <span class="close">&times;</span>
+
+            </div>
+            <div class="modal-body">
+
+                <!--<span style="padding:2px;font-size: large">Some text in the Modal Body</span>-->
+                <div style="padding:5px">
+                    <img src="assets/cordova.png" alt="Avatar" style="width:250px;height: 60px;padding-right:5px" />
+
+                    <i class="fas fa-star fa-sm" style="color:gold;font-size:24px"></i><span style="padding:5px;"></span>
+                    <i class="fas fa-star fa-sm" style="color:gold;font-size:24px"></i><span style="padding:5px;"></span>
+                    <i class="fas fa-star fa-sm" style="color:gold;font-size:24px"></i><span style="padding:5px;"></span>
+                    <i class="fas fa-star fa-sm" style="color:gold;font-size:24px"></i><span style="padding:5px;"></span>
+                </div>
+                <br>
+                <div style="padding:5px">
+                    <img src="assets/xamarin.png" alt="Avatar" style="width:250px;height: 60px;padding-right:5px" />
+
+                    <i class="fas fa-star fa-sm" style="color:gold;font-size:24px"></i><span style="padding:5px;"></span>
+                    <i class="fas fa-star fa-sm" style="color:gold;font-size:24px"></i><span style="padding:5px;"></span>
+                    <i class="fas fa-star fa-sm" style="color:gold;font-size:24px"></i><span style="padding:5px;"></span>
+                </div>
+                <br>
+                <div style="padding:5px">
+                    <img src="assets/j2me.png" alt="Avatar" style="width:250px;height: 60px;padding-right:5px" />
+
+                    <i class="fas fa-star fa-sm" style="color:gold;font-size:24px"></i><span style="padding:5px;"></span>
+                    <i class="fas fa-star fa-sm" style="color:gold;font-size:24px"></i><span style="padding:5px;"></span>
+                </div>
+                <br>
+
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-danger btn6" style="padding:5px">Cancel</button>
+            </div>
+        </div>
+
+    </div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    <div class="foot">
+        <!-- Footer -->
+        <footer class="page-footer" style="background-color:black">
+
+            <div class="container-fluid text-left text-md-left">
+                <!-- Grid row -->
+                <div class="row">
+                    <!-- Grid column -->
+                    <div class="col-md-6">
+
+                        <a href="">
+                            <h5 class="text-uppercase footer-heading"><span> Download CV</span></h5>
+                        </a>
+                        <p><span class="footer-text">For any inquries feel free to contact me on any of these platforms.</span></p>
+
+                    </div>
+                    <!-- Grid column -->
+                    <!--<hr class="clearfix w-100 d-md-none pb-3">-->
+                    <div class="col-md-3 ">
+                        <h5 class="text-uppercase footer-heading"><span> Contact Details</span></h5>
+
+                        <ul class="list-unstyled">
+                            <li>
+                                <a>
+                                    <i class="fas fa-home fa-lg" style="color:white"></i><span style="padding-left:8px" class="footer-text"> 42 Acacia East Street,Midrand</span>
+                                </a>
+                            </li>
+                            <li style="padding-top:10px">
+                                <a>
+                                    <i class="fas fa-envelope fa-lg" style="color:white;padding-right:8px"></i><span style="padding-left:8px" class="footer-text">M.Tshabalala@hotmail.co.za</span>
+                                </a>
+                            </li>
+                            <li style="padding-top:10px">
+                                <a>
+                                    <i class="fas fa-phone fa-lg" style="color:white"></i><span style="padding-left:8px" class="footer-text">0791880902</span>
+                                </a>
+                            </li>
+
+                        </ul>
+
+                    </div>
+
+                    <!-- Grid column -->
+                    <div class="col-md-3">
+
+                        <!-- Links -->
+                        <h5 class="text-uppercase footer-heading"><span> Social Media</span></h5>
+
+                        <ul class="list-unstyled">
+                            <li style="padding-top:10px">
+                                <a class="fb-ic" style="color:white" href="">
+                                    <i class="fab fa-facebook-f fa-lg"> </i>
+                                </a>
+                            </li>
+                            <li style="padding-top:10px">
+                                <a class="tw-ic" style="color:white" href="">
+                                    <i class="fab fa-twitter fa-lg"> </i>
+                                </a>
+                            </li>
+                            <li style="padding-top:10px">
+                                <a class="li-ic" style="color:white" href="">
+                                    <i class="fab fa-linkedin-in fa-lg"> </i>
+                                </a>
+                            </li>
+
+                        </ul>
+
+                    </div>
+
+                </div>
+            </div>
+
+            <!-- Copyright -->
+            <div class="footer-copyright text-center py-3" style="padding-top:30px;padding-bottom:20px">
+                <span class="footer-text">© 2015 Mandlenkosi Tshabalala</span>
+            </div>
+            <!-- Copyright -->
+        </footer>
+    </div>
+</body>
+</html>
+
+
